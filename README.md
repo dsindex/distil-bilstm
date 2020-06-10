@@ -1,3 +1,46 @@
+# how to distil bert to lstm
+
+```
+# prerequisites
+$ python -m pip install -r requirements
+$ python -m spacy download en_core_web_sm
+
+# train bert
+$ python train_bert.py --data_dir sst2 --output_dir bert_output --epochs 3 --batch_size 64 --lr 1e-5 --lr_schedule warmup --warmup_steps 100 --do_train
+{'loss': 0.22899218350135636, 'perplexity': 1.2573322110359069, 'accuracy': 0.9299655568312285}
+
+# generating psuedo labeled 'data + agumented data'
+$ python generate_dataset.py --input sst2/train.tsv --output sst2/augmented.tsv --model bert_output
+$ wc -l sst2/train.tsv sst2/augmented.tsv
+   67349 sst2/train.tsv
+ 1019579 sst2/augmented.tsv
+$ more sst2/augmented.tsv
+...
+remains utterly satisfied to remain the same throughout	0.895635 -0.408034
+remains utterly satisfied to remain <mask> same throughout	1.753451 -1.064335
+remains <mask> repulsive to remain the same throughout	2.333677 -2.028693
+remains <mask> satisfied within remain both same throughout	-0.424739 0.417799
+remains utterly satisfied <mask> <mask> <mask> <mask> throughout	-0.516992 0.773238
+remains utterly satisfied to <mask> the same anew	0.589114 -0.107572
+remains utterly satisfied to <mask> the same <mask>	1.578492 -0.938877
+<mask> utterly satisfied to remain the same throughout	1.845652 -1.405137
+remains utterly fourth to remain the same <mask>	2.092397 -1.506175
+<mask> utterly satisfied to remain the same <mask>	1.235599 -0.915951
+remains utterly satisfied <mask> remain the same throughout	0.679312 -0.015502
+remains utterly satisfied to remain the <mask> <mask>	1.097267 -0.658418
+inc utterly satisfied to remain these same throughout	-0.028254 0.373944
+<mask> utterly satisfied to remain both same <mask>	1.359792 -0.923046
+remains <mask> satisfied <mask> <mask> the same throughout	1.752900 -1.216693
+...
+
+# train bilstm with augmented data
+$ python train_bilstm.py --data_dir sst2 --output_dir bilstm_output --epochs 3 --batch_size 50 --lr 1e-3 --lr_schedule warmup --warmup_steps 100 --do_train --augmented
+
+```
+
+
+----
+
 # distil-bilstm
 
 [![Run on FloydHub](https://static.floydhub.com/button/button-small.svg)](https://floydhub.com/run)
