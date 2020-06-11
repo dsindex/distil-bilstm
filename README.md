@@ -2,14 +2,19 @@
 
 ```
 # prerequisites
+
 $ python -m pip install -r requirements
 $ python -m spacy download en_core_web_sm
 
+
 # train bert
+
 $ python train_bert.py --data_dir sst2 --output_dir bert_output --epochs 3 --batch_size 64 --lr 1e-5 --lr_schedule warmup --warmup_steps 100 --do_train
 {'loss': 0.22899218350135636, 'perplexity': 1.2573322110359069, 'accuracy': 0.9299655568312285}
 
+
 # generating psuedo labeled 'data + agumented data'
+
 $ python generate_dataset.py --input sst2/train.tsv --output sst2/augmented.tsv --model bert_output
 $ wc -l sst2/train.tsv sst2/augmented.tsv
    67349 sst2/train.tsv
@@ -33,8 +38,17 @@ inc utterly satisfied to remain these same throughout	-0.028254 0.373944
 remains <mask> satisfied <mask> <mask> the same throughout	1.752900 -1.216693
 ...
 
-# train bilstm with augmented data
+
+# train bilstm with train.tsv
+
+$ python train_bilstm.py --data_dir sst2 --output_dir bilstm_output --epochs 3 --batch_size 50 --lr 1e-3 --lr_schedule warmup --warmup_steps 100 --do_train
+$ {'loss': 0.5686685516147197, 'perplexity': 1.7659142617799288, 'accuracy': 0.8231917336394948}
+
+
+# train bilstm with augmented.tsv
+
 $ python train_bilstm.py --data_dir sst2 --output_dir bilstm_output --epochs 3 --batch_size 50 --lr 1e-3 --lr_schedule warmup --warmup_steps 100 --do_train --augmented
+{'loss': 0.34691110516798895, 'perplexity': 1.4146909610652816, 'accuracy': 0.886337543053961}
 
 ```
 
