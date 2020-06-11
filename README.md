@@ -12,8 +12,7 @@ $ python -m spacy download en_core_web_sm
 $ python train_bert.py --data_dir sst2 --output_dir bert_output --epochs 3 --batch_size 64 --lr 1e-5 --lr_schedule warmup --warmup_steps 100 --do_train
 {'loss': 0.22899218350135636, 'perplexity': 1.2573322110359069, 'accuracy': 0.9299655568312285}
 
-
-# generating psuedo labeled 'data + agumented data'
+# generating pseudo labeled 'data + agumented data'
 
 $ python generate_dataset.py --input sst2/train.tsv --output sst2/augmented.tsv --model bert_output
 $ wc -l sst2/train.tsv sst2/augmented.tsv
