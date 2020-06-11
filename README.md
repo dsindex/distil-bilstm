@@ -1,23 +1,22 @@
 # how to distil bert to lstm
 
+### prerequisites
 ```
-# prerequisites
-
 $ python -m pip install -r requirements
 $ python -m spacy download en_core_web_sm
+```
 
-
-# train bert
-
+### train bert
+```
 $ python train_bert.py --data_dir sst2 --output_dir bert_output --epochs 3 --batch_size 64 --lr 1e-5 --lr_schedule warmup --warmup_steps 100 --do_train
 {'loss': 0.22899218350135636, 'perplexity': 1.2573322110359069, 'accuracy': 0.9299655568312285}
+```
 
-# generating pseudo labeled 'data + augmented data'
+### generating pseudo labeld data
 
+- augmented.tsv : 'data + augmented data'
+```
 $ python generate_dataset.py --input sst2/train.tsv --output sst2/augmented.tsv --model bert_output
-$ wc -l sst2/train.tsv sst2/augmented.tsv
-   67349 sst2/train.tsv
- 1019579 sst2/augmented.tsv
 $ more sst2/augmented.tsv
 ...
 remains utterly satisfied to remain the same throughout	0.895635 -0.408034
@@ -36,16 +35,32 @@ inc utterly satisfied to remain these same throughout	-0.028254 0.373944
 <mask> utterly satisfied to remain both same <mask>	1.359792 -0.923046
 remains <mask> satisfied <mask> <mask> the same throughout	1.752900 -1.216693
 ...
+```
 
+- noaugmented.tsv : 'data' (no agumentation)
+```
+$ python generate_dataset.py --input sst2/train.tsv --output sst2/noaugmented.tsv --model bert_output --no_augment
+$ wc -l sst2/train.tsv sst2/noaugmented.tsv sst2/augmented.tsv
+   67349 sst2/train.tsv
+   67349 sst2/noaugmented.tsv
+ 1019579 sst2/augmented.tsv
+```
 
-# train bilstm with train.tsv
-
+#### train bilstm with train.tsv
+```
 $ python train_bilstm.py --data_dir sst2 --output_dir bilstm_output --epochs 3 --batch_size 50 --lr 1e-3 --lr_schedule warmup --warmup_steps 100 --do_train
 $ {'loss': 0.5686685516147197, 'perplexity': 1.7659142617799288, 'accuracy': 0.8231917336394948}
+```
 
+### train bilstm with noaugmented.tsv
+```
+$ python train_bilstm.py --data_dir sst2 --output_dir bilstm_output --epochs 3 --batch_size 50 --lr 1e-3 --lr_schedule warmup --warmup_steps 100 --do_train --use_teacher
+{'loss': 0.5855035836606294, 'perplexity': 1.7958951414111743, 'accuracy': 0.8438576349024111}
 
-# train bilstm with augmented.tsv
+```
 
+### train bilstm with augmented.tsv
+```
 $ python train_bilstm.py --data_dir sst2 --output_dir bilstm_output --epochs 3 --batch_size 50 --lr 1e-3 --lr_schedule warmup --warmup_steps 100 --do_train --augmented
 {'loss': 0.34691110516798895, 'perplexity': 1.4146909610652816, 'accuracy': 0.886337543053961}
 
