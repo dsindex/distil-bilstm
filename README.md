@@ -46,20 +46,22 @@ $ wc -l sst2/train.tsv sst2/noaugmented.tsv sst2/augmented.tsv
  1019579 sst2/augmented.tsv
 ```
 
-#### train bilstm with train.tsv
+### train bilstm
+
+- bilstm with train.tsv
 ```
 $ python train_bilstm.py --data_dir sst2 --output_dir bilstm_output --epochs 3 --batch_size 50 --lr 1e-3 --lr_schedule warmup --warmup_steps 100 --do_train
 $ {'loss': 0.5686685516147197, 'perplexity': 1.7659142617799288, 'accuracy': 0.8231917336394948}
 ```
 
-### train bilstm with noaugmented.tsv
+- bilstm with noaugmented.tsv
 ```
 $ python train_bilstm.py --data_dir sst2 --output_dir bilstm_output --epochs 3 --batch_size 50 --lr 1e-3 --lr_schedule warmup --warmup_steps 100 --do_train --use_teacher
 {'loss': 0.5855035836606294, 'perplexity': 1.7958951414111743, 'accuracy': 0.8438576349024111}
 
 ```
 
-### train bilstm with augmented.tsv
+- bilstm with augmented.tsv
 ```
 $ python train_bilstm.py --data_dir sst2 --output_dir bilstm_output --epochs 3 --batch_size 50 --lr 1e-3 --lr_schedule warmup --warmup_steps 100 --do_train --augmented
 {'loss': 0.34691110516798895, 'perplexity': 1.4146909610652816, 'accuracy': 0.886337543053961}
